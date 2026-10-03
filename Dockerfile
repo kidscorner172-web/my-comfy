@@ -1,11 +1,10 @@
 FROM runpod/worker-comfyui:5.10.0-base
 
-# Custom node used by your workflow
-RUN cd /comfyui/custom_nodes && \
-    git clone https://github.com/kijai/ComfyUI-KJNodes.git && \
-    cd ComfyUI-KJNodes && \
-    if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+# KJNodes: exact commit from your PC
+RUN cd /comfyui/custom_nodes && git clone https://github.com/kijai/ComfyUI-KJNodes ComfyUI-KJNodes && cd ComfyUI-KJNodes && git checkout d3cfe21625e5170126ce06fbfcfe1d88108688c3 && if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-# Point ComfyUI at the models on your network volume
+# Registry packs: exact versions from your PC
+RUN comfy-node-install comfyui-videohelpersuite@1.7.9 rgthree-comfy@1.0.2608210019 comfyui-vrgamedevgirl@9.1.1
+
 RUN rm -f /comfyui/extra_model_paths.yaml
 COPY extra_model_paths.yaml /comfyui/extra_model_paths.yaml
